@@ -1,76 +1,154 @@
-<?php
+<? echo $users; ?>
 
-namespace App\Http\Controllers;
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <title>Seeker Machine Test</title>
+    <style>
+        *{
+            /* border:1px solid red; */
+        }
+        input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
-use Illuminate\Http\Request;
-use App\Models\Bucket;
-use App\Models\Ball;
-use App\Models\FillBucket;
-use Illuminate\Support\Facades\DB;
-use Redirect;
-use Validator;
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6" >
+                <h1>Bucket Form</h1>
+                <div class='p-3' style="border:1px solid gray" > 
+                
+                        <div class='p-3 d-flex justify-content-between'>
+                            <label for="" >Bucket Name : </label>
+                            <input class="w-50" type="text" name="bucket_name"  id='bucket_name' onkeypress="return (event.charCode > 64 && 
+event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)" required>
+                           
+                        </div>
+                        <div class='p-3 d-flex justify-content-between' >
+                            <label for="">Volume (in inches) : </label><input class="w-50" type="number" name='bucket_volume'  id='bucket_volume' required>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <input type="submit" name="bucket" value="Save" onclick="storeValue()" >
+                        </div>
+                    
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h1>Ball Form</h1>
+                <div class='p-3' style="border:1px solid gray">
+                <!-- <form action="createBall" method="post">
+                    @csrf -->
+                    <div class='p-3 d-flex justify-content-between'>
+                        <label for="">Ball Name : </label>
+                        <!-- <select class="w-50 " name="ball_name" id="ball" onchange="getVolumeValue()" required>
+                        <option value="">Select Ball</option>
+                            @foreach ($ball as $balls)
+                            <option value="{{$balls->id}},{{$balls->ball_value}}">{{ $balls->ball_name }}</option>
+                            @endforeach 
 
-class PostController extends Controller
-{
-    //
-    public function index()
-    {
-        $data1 = Bucket::all();
-        $ball = Ball::all();
-        return view('form',compact('data1','ball'));
+                        </select> -->
+                        <input class="w-50" type="text" name="ball_name"  id='ball' onkeypress="return (event.charCode > 64 && 
+event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)"  required>
+                    </div>
+                    <input class="w-50" type="hidden"  name='bucketname' id='bucket_val'>
+                    <input class="w-50" type="hidden"  name='bucket_vol' id='bucket_vol'>
+                    <div class='p-3 d-flex justify-content-between'>
+                        <label for="">Volume (in inches) : </label><input class="w-50" type="text" name="ball_volume" value='' id='ball_val'>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <input type="submit" name="Save" value="Save"  onclick="getVolumeValue()">
+                    </div>
+                <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+
+    
+    function storeValue(){
+        var bucket = $('#bucket_name').val().toUpperCase();
+
+        var bucket_volume = $('#bucket_volume').val();
         
-    }
-    public function storeData(Request $request)
-    {
-
-        $validatedData = $request->validate([ 'bucket_id' => 'required', 'ball_name' => 'required', // Add more validation rules for other fields 
-    ]);
-        if ($validatedData->fails()) {
-            return response()->json(['status' => false, 'message' => $validatedData->errors()->first()], JsonResponse::HTTP_BAD_REQUEST);
-        }
-       $val = explode(',',$request->ball_name);
-       $check  = Bucket::select('*')->where('bucket_name','=',$request->bucket_val)->first();
-       $current = $check->remaining_volume-$val[1];
-       if($check->remaining_volume >=$current){
-        $insert = new FillBucket();
-        $insert->bucket_id = $check->id;
-        $insert->ball_id = $val[0];
-        $insert->bucket_volume = $check->remaining_volume==0?$check->bucket_volume:$check->remaining_volume;
-        $insert->bucket_volume_remains = $current;
-        $insert->bucket_contain_cubic_inches = $val[1];
-        $insert->ball_value =$val[1];
-        $res = $insert->save();
-        if($res){
-                $update = Bucket::find($check->id);
-                $update->remaining_volume = $insert->bucket_volume_remains;
-                $update->save();
-               $data1 = Bucket::all();
-             $ball = Ball::all();
-            return view('form',compact('data1','ball'));
-        }
+       if(bucket.length == '' || bucket_volume.length == ''){
+            alert('All Field\'s are mandatory!')
        }else{
-        return response()->json(['message'=>'Bucket has no more space!']);
+        
+    
+        $.ajax({
+            url: '/createBucket',
+            type: 'post',
+            data:{bucket_name:bucket, bucket_volume:bucket_volume},
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+            error: function(xhr, status, error) {
+          alert(xhr.responseText+error);
+        },
+            success: function(response){  
+                $('#bucket_val').val(bucket);
+
+                $('#bucket_vol').val(bucket_volume);
+                $('#bucket_volume').val(response.data)
+                alert(response.message);
+                alert("Bucket added, Please fill ball in selected Bucket");
+            }
+        });
        }
        
-        
+       
     }
 
-    function checkBucket(Request $req){
-        $check  = Bucket::where('bucket_name','=',$req->bucket_name)->first();
-        if($check){
-            $vol = $check->remaining_volume==0?$check->bucket_volume:$check->remaining_volume;
-            return response()->json(['message'=>'Bucket value already given','data'=>$vol]);
-            // echo  "Bucket value already given";
-        }else{
-            $insert = new Bucket();
-            $insert->bucket_name = $req->bucket_name;
-            $insert->bucket_volume = $req->bucket_volume;
-            $insert->bucket_volume_in_inches = 20;
-            $insert->remaining_volume =     $req->bucket_volume;
-            $res = $insert->save();
-            // echo "Bucket Insert Successfuly!";
-            return response()->json(['message'=>'Bucket Insert Successfuly!']);
-        }
+    function getVolumeValue(){
+       var ball = $('#ball').val().toUpperCase();
+       var bucket = $('#bucket_val').val().toUpperCase();
+
+       var bucket_vol = $('#bucket_vol').val();
+       var ball_val = $('#ball_val').val();
+       if(ball.length == '' || ball_val.length == ''){
+            alert('All Field\'s are mandatory!')
+       }else{
+        $.ajax({
+            url: '/createBall',
+            type: 'post',
+            data:{bucket_name:bucket, bucket_volume:bucket_vol,ball_name:ball,ball_volume:ball_val},
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+            error: function(xhr, status, error) {
+          alert(xhr.responseText+error);
+        },
+            success: function(response){    
+                // $('#bucket_volume').val(response.data)
+                alert(response.message);
+                // alert("Bucket added, Please fill ball in selected Bucket");
+            }
+        });
+       }
+       
+
+
+
+
+
     }
-    
-}
+ 
+</script>

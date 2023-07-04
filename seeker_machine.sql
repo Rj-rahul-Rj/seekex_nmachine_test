@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 29, 2023 at 02:06 PM
+-- Generation Time: Jul 04, 2023 at 01:02 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -35,17 +35,6 @@ CREATE TABLE `balls` (
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `balls`
---
-
-INSERT INTO `balls` (`id`, `ball_name`, `ball_value`, `created_at`, `updated_at`) VALUES
-(1, 'PINK', 2.5, '2023-06-29 06:11:06', '2023-06-29 06:11:06'),
-(2, 'RED', 2, '2023-06-29 06:16:07', '2023-06-29 06:16:07'),
-(3, 'BLUE', 1, '2023-06-29 06:16:07', '2023-06-29 06:16:07'),
-(4, 'ORANGE', 0.8, '2023-06-29 06:11:06', '2023-06-29 06:12:01'),
-(5, 'GREEN', 0.5, '2023-06-29 06:15:26', '2023-06-29 06:15:52');
-
 -- --------------------------------------------------------
 
 --
@@ -61,19 +50,6 @@ CREATE TABLE `buckets` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `buckets`
---
-
-INSERT INTO `buckets` (`id`, `bucket_name`, `bucket_volume`, `bucket_volume_in_inches`, `remaining_volume`, `created_at`, `updated_at`) VALUES
-(1, 'A', 100, 20, 100, NULL, '2023-06-29 06:06:49'),
-(2, 'B', 100, 18, 100, NULL, '2023-06-29 06:03:06'),
-(3, 'C', 100, 12, 100, NULL, '2023-06-29 06:05:01'),
-(4, 'D', 100, 10, 100, NULL, '2023-06-29 06:06:30'),
-(5, 'E', 100, 8, 100, NULL, NULL),
-(6, 'G', 100, 20, 100, '2023-06-29 03:09:17', '2023-06-29 03:09:17'),
-(7, 'F', 100, 20, 100, '2023-06-29 05:23:30', '2023-06-29 05:23:30');
 
 -- --------------------------------------------------------
 
@@ -246,13 +222,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `balls`
 --
 ALTER TABLE `balls`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `buckets`
 --
 ALTER TABLE `buckets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
